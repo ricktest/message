@@ -3,9 +3,12 @@
     class database{
 
         private $con;
+        private $config;
 
         function __construct(){
-            $this->con=new mysqli("localhost","root","","test");
+            require_once './lib/Config/databaseConfig.php';
+            $this->config=new databaseConfig();
+            $this->con=new mysqli($this->config->dbhost,$this->config->acount,"",$this->config->db_name);
             if(!$this->con){
                 die("連線錯誤: " . mysqli_connect_error());
             }
@@ -16,32 +19,17 @@
            return  mysqli_real_escape_string($this->con,$data);
         }
 
-        function sqlquery($sql,$debug=false){
-            
-           // echo $sql;
-            //$sql=$this->replacesql($sql);
-            if($debug){
-                echo $sql.'</br>';
-            }
-            
-            return  mysqli_query($this->con,$sql);  
+        function sqlquery($sql){
+          
+            return $this->con->query($sql);
+          
         }
-
-        function insertdata($table,$data,$debug=false){
-            $sql="INSERT INTO `".$table."` (`".implode('`,`', array_keys($data))."`) VALUES ('".implode("','", $data)."')";
-            $sql=$this->replacesql($sql);
-            if($debug){
-                echo $sql.'</br>';
+        function resultarray($obj_data){
+            $arr_data=array();
+            while($result=mysqli_fetch_assoc($obj_data)){
+                $arr_data[]=$result;
             }
-
-            return  mysqli_query($this->con,$sql);  
-        }
-
-        function replacesql($sql){
-            $words = addslashes($sql);
-            $words = str_replace("_","\_",$sql);
-            $words = str_replace("%","\%",$sql);
-            return $words;
+            return $arr_data;
         }
     }
     

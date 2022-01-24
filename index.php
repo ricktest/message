@@ -1,14 +1,20 @@
 <?php 
  
-    $str = addslashes("'Shanghai is the 'biggest' city in China.");
+    
     spl_autoload_register(function($className){
+        
         require_once 'lib/' . $className . '.php';
+
     });
     session_start();
     $Link_data=array(
         'dashbord'=>'./?c=users&m=login'
     );
- 
+    //$model = new Model();
+    //$model->where(['up_us_id'=>'45'])->Delete('12');
+    //$test=$model->set(['up_content'=>'123456'])->where(['up_id'=>'7'])->Update();
+   //$test=$model->where(['up_id'=>'8'])->SelectData();
+   // print_r($test);
     if(empty($_SESSION) && array_key_exists($_GET['c'],$Link_data)){
         //print_r($_SESSION);
         header("Location: ./?c=users&m=login"); 

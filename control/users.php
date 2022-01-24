@@ -1,6 +1,7 @@
 <?php
  class users extends  Control{
     private $usermodel;
+
     public function __construct()
     {
         $this->usermodel=$this->Model('user');
@@ -23,12 +24,13 @@
         }else if(empty($_POST['pwd'])){
             $data['erreo']['pwd']='請輸入密碼';
         }else{
-           // $data=$_POST;
+          
             $data2['acount']=$_POST['acount'];
             $data2['pwd']=$_POST['pwd'];
-            $users=$this->usermodel->SelectSingleUser($data2);
-            if(isset($users)){      
-                $_SESSION=$users;
+            
+            $users=$this->usermodel->where($data2)->SelectData();
+            if(count($users)>0){      
+                $_SESSION=$users[0];
                echo '<script> alert("登入成功");
                document.location.href="./?c=dashbord&m=index";</script>';
             }else{
@@ -55,15 +57,14 @@
             echo '<script> alert("密碼不得超過20個字");</script>';
         }else{
             $data['acount']=$_POST['acount'];
-            $users=$this->usermodel->SelectSingleacount($data);
-           // print_r($users);
-            if(isset($users)){
+           
+            $users=$this->usermodel->where($data)->SelectData();
+           
+            if(count($users)>0){
                 echo '<script> alert("帳號重複請重新輸入");</script>';
             }else{
                 $data=$_POST;
-                //$sql='INSERT INTO `users` (`name`, `acount`, `pwd`) VALUES ("'.$_POST['name'].'", "'.$_POST['acount'].'", "'.$_POST['pwd'].'")';
-                //print_r($data);
-                $users=$this->usermodel->InsertUser('users',$data);
+                $users=$this->usermodel->Create($data);
                 if(!$users){
                     echo '<script> alert("註冊失敗");</script>';
                 }else{
