@@ -5,7 +5,7 @@
         {
             $this->userspost=$this->Model('userspost');
         }
-
+        /*留言板*/
         public function index(){
             $arr_posts=$this->userspost->leftjoin([
                 'left'=>'users',
@@ -17,7 +17,7 @@
 
             $this->view('dashboard',$arr_posts);
         }
-
+        /*邊及留言版*/
         public function edit(){
             if(isset($_POST['up_id'])){
                 $bool=$this->userspost->set(['up_content'=>$_POST['message']])
@@ -35,6 +35,7 @@
             $arr_posts=$this->userspost->where(['up_us_id'=>$_SESSION['id']])->SelectData();
             $this->view('edit',$arr_posts);
         }
+        /*刪除留言板*/
         public function delect(){
             if(isset($_POST['up_id'])){
                 $bool=$this->userspost
@@ -49,6 +50,7 @@
             $arr_posts=$this->userspost->where(['up_us_id'=>$_SESSION['id']])->SelectData();
             $this->view('delect',$arr_posts);
         }
+        /*新增留言*/
         public function message(){
            
             if(isset($_POST['message'])){
