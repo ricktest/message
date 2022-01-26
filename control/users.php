@@ -15,29 +15,40 @@
         $this->view('login',$data);
     }
     public function loginprogess(){
+        $fun=new fun();
+        $data=[
+            'acount'=>[
+                    'rules'=>'required',
+                    'errors'=>[
+                        'required'=>'請輸入帳號',
+                    ]
+            ],
+            'pwd'=>[
+                    'rules'=>'required',
+                    'errors'=>[
+                        'required'=>'請輸入密碼',
+                    ]
+            ]
+        ];
+        $fun->run($data);
+        $erreo=$fun->geterreos();
 
-        $data['erreo']['acount']='';
-        $data['erreo']['pwd']='';
+        if(isset($erreo)){
+            $_SESSION['erreo']=$erreo;
+            $this->redirect('./?c=users&m=login');
+        }
 
-        if(empty($_POST['acount'])){
-            $data['erreo']['acount']='請輸入帳號';
-        }else if(empty($_POST['pwd'])){
-            $data['erreo']['pwd']='請輸入密碼';
-        }else{
-          
+        if(empty($erreo) && isset($_POST)){
             $data2['acount']=$_POST['acount'];
             $data2['pwd']=$_POST['pwd'];
-            
             $users=$this->usermodel->where($data2)->SelectData();
-            if(count($users)>0){      
+            if(isset($users)){      
                 $_SESSION=$users[0];
-               echo '<script> alert("登入成功");
-               document.location.href="./?c=dashbord&m=index";</script>';
+                $this->redirect('./?c=dashbord&m=index','登入成功');
             }else{
-                echo '<script> alert("帳號密碼錯誤");document.location.href="./?c=users&m=login";</script>';
+                $this->redirect('./?c=users&m=login','帳號密碼錯誤');
             }
         }
-        $this->view('login',$data);
     }
     public function register(){
         
@@ -45,36 +56,57 @@
     }
     public function registerpro(){
         
-        if(empty($_POST['name'])){
-            echo '<script> alert("請輸入名字");</script>';
-        }else if(empty($_POST['acount'])){
-            echo '<script> alert("請輸入帳號");</script>';
-        }else if(strlen($_POST['acount'])>10){
-            echo '<script> alert("帳號不得超過10個字");</script>';
-        }else if(empty($_POST['pwd'])){
-            echo '<script> alert("請輸入密碼");</script>';
-        }else if(strlen($_POST['pwd'])>20){
-            echo '<script> alert("密碼不得超過20個字");</script>';
-        }else{
-            $data['acount']=$_POST['acount'];
-           
-            $users=$this->usermodel->where($data)->SelectData();
-           
-            if(count($users)>0){
-                echo '<script> alert("帳號重複請重新輸入");</script>';
+        $fun=new fun();
+        $data=[
+            'name'=>['rules'=>'required|max[20]',
+                    'errors'=>[
+                        'required'=>'請輸入名字',
+                        'max'=>'超過最大值20'
+                    ]
+                ],
+            'acount'=>[
+                    'rules'=>'required|max[20]',
+                    'errors'=>[
+                        'required'=>'請輸入帳號',
+                        'max'=>'超過最大值20'
+                    ]
+            ],
+            'pwd'=>[
+                    'rules'=>'required|max[20]',
+                    'errors'=>[
+                        'required'=>'請輸入密碼',
+                        'max'=>'超過最大值20'
+                    ]
+            ]
+        ];
+        $fun->run($data);
+        $erreo=$fun->geterreos();
+
+        if(isset($erreo)){
+            $_SESSION['erreo']=$erreo;
+            $this->redirect('./?c=users&m=register');
+        }
+
+        if(empty($erreo) && isset($_POST)){
+            $sql_data['acount']=$_POST['acount'];
+            $users=$this->usermodel->where($sql_data)->SelectData();
+            
+            if(isset($users)){
+                $_SESSION['erreo']['重複']='帳號重複請重新輸入';
+                $this->redirect('./?c=users&m=register');
             }else{
-                $data=$_POST;
-                $users=$this->usermodel->Create($data);
-                if(!$users){
-                    echo '<script> alert("註冊失敗");</script>';
+                $sql_data['name']=$_POST['name'];
+                $sql_data['acount']=$_POST['acount'];
+                $sql_data['pwd']=$_POST['pwd'];
+                
+                if($this->usermodel->Create($sql_data)){
+                    $this->redirect('./?c=users&m=login','註冊成功');
                 }else{
-                   echo '<script> alert("註冊成功");
-                   document.location.href="./?c=users&m=login";</script>';
+                    $this->redirect('./?c=users&m=register','註冊失敗');
                 }
+                
             }
         }
-        $this->view('register');
-        //print_r($data);
     }
 }
 

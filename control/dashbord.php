@@ -7,6 +7,7 @@
         }
         /*留言板*/
         public function index(){
+        
             $arr_posts=$this->userspost->leftjoin([
                 'left'=>'users',
                 'ON'=>[

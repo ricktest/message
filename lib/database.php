@@ -25,7 +25,7 @@
           
         }
         function resultarray($obj_data){
-            $arr_data=array();
+            $arr_data=null;
             while($result=mysqli_fetch_assoc($obj_data)){
                 $arr_data[]=$result;
             }

@@ -21,7 +21,7 @@
             $sql="INSERT INTO `".$this->table."` (`".implode('`,`', array_keys($data))."`) VALUES ('".implode("','", $data)."')";
             
             $bool=$this->db->sqlquery($sql);
-            
+            echo $bool;
             return $bool;
         
         }
