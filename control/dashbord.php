@@ -20,36 +20,54 @@
         }
         /*邊及留言版*/
         public function edit(){
+            
             if(isset($_POST['up_id'])){
-                $bool=$this->userspost->set(['up_content'=>$_POST['message']])
+                $fun=new fun();
+                $data=[
+                    'message'=>['rules'=>'required|max[2000]',
+                            'errors'=>[
+                                'required'=>'請輸入內容',
+                                'max'=>'超過最大值2000'
+                            ]
+                        ],
+                ];
+                $fun->run($data);
+                $erreo=$fun->geterreos();
+        
+                if(isset($erreo)){
+                    $this->redirect('./?c=dashbord&m=edit&up_id='.$_POST['up_id'],$erreo['message']);
+                }
+
+                $bool=$this->userspost->set(['up_content'=>$_POST['message'],'up_updatetime'=>date('Y-m-d H:i')])
                                 ->where(['up_us_id'=>$_SESSION['id'],'up_id'=>$_POST['up_id']])
                                 ->Update();
                 if($bool){
                     echo '<script> alert("修改成功");
-                    document.location.href="./?c=dashbord&m=edit";</script>';
+                    document.location.href="./?c=dashbord&m=index";</script>';
                     exit;
-                }else{
-                    //echo '<script> alert("修改失敗");
-                   // document.location.href="./?c=dashbord&m=edit";</script>';
                 }
             }
-            $arr_posts=$this->userspost->where(['up_us_id'=>$_SESSION['id']])->SelectData();
-            $this->view('edit',$arr_posts);
+
+            if(isset($_GET['up_id'])){
+                $arr_posts=$this->userspost->where(['up_us_id'=>$_SESSION['id'],'up_id'=>$_GET['up_id']])->SelectData();
+                $this->view('edit',$arr_posts);
+            }
+           
         }
         /*刪除留言板*/
         public function delect(){
-            if(isset($_POST['up_id'])){
+
+            if(isset($_GET['up_id'])){
                 $bool=$this->userspost
                                 ->where(['up_us_id'=>$_SESSION['id']])
-                                ->Delete($_POST['up_id']);
+                                ->Delete($_GET['up_id']);
                 if($bool){
                     echo '<script> alert("刪除成功");
-                    document.location.href="./?c=dashbord&m=delect";</script>';
+                    document.location.href="./?c=dashbord&m=index";</script>';
                     exit;
                 }
             }
-            $arr_posts=$this->userspost->where(['up_us_id'=>$_SESSION['id']])->SelectData();
-            $this->view('delect',$arr_posts);
+
         }
         /*新增留言*/
         public function message(){

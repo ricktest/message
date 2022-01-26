@@ -49,6 +49,7 @@
         }
 
         public function Delete($id){
+            $id=$this->db->replacedata($id);
             $sql="DELETE FROM `".$this->table."` where " .$this->primaryKey."=".$id." ".$this->sql_str;
             return $this->db->sqlquery($sql);
         }

@@ -23,7 +23,9 @@
             margin-top:100px;
            
         }
+        
         .login .message{
+            border:2px red solid;
             text-align:left;
             padding: 10px;
             margin-top:50px;
@@ -33,15 +35,21 @@
             color:black;
            
         }
-
+        .button{
+            float:right;
+            
+        }
         .message_content{
-           
-            width:50%;
-            display:inline;
+          
+            width:100%;
+            display:block;
             text-align: justify;
             text-justify:inter-ideograph;
-            line-height:20px;
+            line-height:25px;
             word-break: break-all;
+            padding-top:5px;
+            padding-bottom:10px;
+           
         }
 
         p{
@@ -59,11 +67,18 @@
             display:inline;
             letter-spacing: 2px;
             margin-right:20px;
+            float:right;
         }
         .date{
-            font-size:10px;
+            display:inline;
+            font-size:5px;
             line-height:20px; 
-            text-align:right;
+            float:right;
+            
+        }
+        .left{
+            float:left;
+            
         }
         .warp2{
             text-align:left;
@@ -78,15 +93,22 @@
             display:block;  
             margin-bottom:10px;
         }
+        .clear{
+            clear:both;
+        }
     </style>
+    <script src="./js/jquery-3.6.0.js"></script>
 </head>
 <body>
 <div class="content">
+    <?php if(isset($_SESSION['id']) && isset($_GET['c']) && $_GET['c']=='dashbord'){?>
+       
     <div class="tour">
-        <div><a href="./?c=dashbord&m=index">留言區</a></div>
-        <div><a href="./?c=dashbord&m=delect">刪除留言</a></div>
-        <div><a href="./?c=dashbord&m=edit">編輯留言</a></div>
-        <div><a href="./?c=dashbord&m=message">我要留言</a></div>
+        <h2><?=$_SESSION['name']?>你好~</h2>
         <div><a href="./?c=dashbord&m=logout">登出</a></div>
+        <div><a href="./?c=dashbord&m=message">我要留言</a></div>
+        <div><a href="./?c=dashbord&m=index">留言區</a></div>
     </div>
+    <?php }?>
+    <div class="clear" ></div>
 <div class="login">

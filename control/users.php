@@ -10,9 +10,9 @@
 
     public function login($data=array())
     {
-        
        
         $this->view('login',$data);
+       
     }
     public function loginprogess(){
         $fun=new fun();
@@ -30,12 +30,13 @@
                     ]
             ]
         ];
-        $fun->run($data);
+        $fun->run($data,true);
         $erreo=$fun->geterreos();
-
+        //print_r($erreo);
         if(isset($erreo)){
-            $_SESSION['erreo']=$erreo;
-            $this->redirect('./?c=users&m=login');
+            $msg['msg']=$erreo;
+            echo json_encode($msg);
+            return ;
         }
 
         if(empty($erreo) && isset($_POST)){
@@ -44,9 +45,15 @@
             $users=$this->usermodel->where($data2)->SelectData();
             if(isset($users)){      
                 $_SESSION=$users[0];
-                $this->redirect('./?c=dashbord&m=index','登入成功');
+                $msg['link']='./?c=dashbord&m=index';
+                echo json_encode($msg);
+                return ;
+                //$this->redirect('./?c=dashbord&m=index','登入成功');
             }else{
-                $this->redirect('./?c=users&m=login','帳號密碼錯誤');
+                $msg['msg']='帳號密碼錯誤';
+                echo json_encode($msg);
+                return ;
+                //$this->redirect('./?c=users&m=login','帳號密碼錯誤');
             }
         }
     }
