@@ -20,7 +20,7 @@
         }
         /*邊及留言版*/
         public function edit(){
-            
+
             if(isset($_POST['up_id'])){
                 $fun=new fun();
                 $data=[
@@ -38,8 +38,14 @@
                     $this->redirect('./?c=dashbord&m=edit&up_id='.$_POST['up_id'],$erreo['message']);
                 }
 
+                $sql_where=[];
+                
+                if($_SESSION['acount']!='root'){
+                    $sql_where['up_us_id']=$_SESSION['id'];
+                }
+                $sql_where['up_id']=$_POST['up_id'];
                 $bool=$this->userspost->set(['up_content'=>$_POST['message'],'up_updatetime'=>date('Y-m-d H:i')])
-                                ->where(['up_us_id'=>$_SESSION['id'],'up_id'=>$_POST['up_id']])
+                                ->where($sql_where)
                                 ->Update();
                 if($bool){
                     echo '<script> alert("修改成功");
@@ -49,7 +55,11 @@
             }
 
             if(isset($_GET['up_id'])){
-                $arr_posts=$this->userspost->where(['up_us_id'=>$_SESSION['id'],'up_id'=>$_GET['up_id']])->SelectData();
+                if($_SESSION['acount']!='root'){
+                    $sql_where['up_us_id']=$_SESSION['id'];
+                }
+                $sql_where['up_id']=$_GET['up_id'];
+                $arr_posts=$this->userspost->where($sql_where)->SelectData();
                 $this->view('edit',$arr_posts);
             }
            
@@ -58,8 +68,15 @@
         public function delect(){
 
             if(isset($_GET['up_id'])){
+
+                
+                $sql_where=[];
+                if($_SESSION['acount']!='root'){
+                    $sql_where['up_us_id']=$_SESSION['id'];
+                }
+                
                 $bool=$this->userspost
-                                ->where(['up_us_id'=>$_SESSION['id']])
+                                ->where($sql_where)
                                 ->Delete($_GET['up_id']);
                 if($bool){
                     echo '<script> alert("刪除成功");

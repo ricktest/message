@@ -1,3 +1,4 @@
+<?php  $this->section();?>
 <?php 
 if(isset($data)){
 foreach($data as $k=>$v){?>
@@ -11,4 +12,7 @@ foreach($data as $k=>$v){?>
 </div>
 <?php }
 }
+?>
+<?php 
+$this->endSection();
 ?>

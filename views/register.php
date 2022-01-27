@@ -1,3 +1,4 @@
+<?php  $this->section();?>
 <div class="warp">
     <h2>註冊</h2>
     <form action="./?c=users&m=registerpro" method="post">
@@ -34,3 +35,7 @@
         </p>
     </form>
     </div>
+    <?php 
+$this->endSection();
+
+?>

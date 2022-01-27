@@ -38,19 +38,27 @@
         }
         
         public function where($data){
+            
             $arr_data=array();
-            foreach($data as $k=>$v){
-                $v=$this->db->replacedata($v);
-                $arr_data[]=" AND `".$k."`='".$v."'";
+            if(count($data)>0){
+                foreach($data as $k=>$v){
+                    $v=$this->db->replacedata($v);
+                    $arr_data[]=" AND `".$k."`='".$v."'";
+                }
             }
+            
             //$this->sql_str.=" where 1";
             $this->sql_str.=implode(' ',$arr_data);
             return $this;
         }
 
-        public function Delete($id){
+        public function Delete($id,$debug=false){
             $id=$this->db->replacedata($id);
-            $sql="DELETE FROM `".$this->table."` where " .$this->primaryKey."=".$id." ".$this->sql_str;
+            $sql="DELETE FROM `".$this->table."` where " .$this->primaryKey."='".$id."' ".$this->sql_str;
+            if($debug){
+                echo $sql;
+                exit;
+            }
             return $this->db->sqlquery($sql);
         }
 
@@ -66,7 +74,7 @@
             return $this;
         }
 
-        public function Update($id='',$data=array()){
+        public function Update($id='',$data=array(),$debug=false){
 
             foreach($data as $k=>$v){
                 $data[$k]=$this->db->replacedata($v);
@@ -75,9 +83,12 @@
             if(count($data)>0){
                 $this->set($data);
             }
-            
+           
             $sql="UPDATE `".$this->table."`  ".$this->sql_str."";
-            
+            if($debug){
+                echo $sql;
+                exit;
+            }     
             $this->sql_str='';
              return $this->db->sqlquery($sql);
         }

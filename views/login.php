@@ -1,3 +1,4 @@
+<?php  $this->section();?>
 <script>
 $(function(){ 
     
@@ -30,6 +31,7 @@ $(function(){
         });
 }); 
 </script>
+
   <div class="warp">
     <h2>登入</h2>
     <form action="" method="post" id="logintForm">
@@ -45,5 +47,10 @@ $(function(){
         <a href="./?c=users&m=register"><input type="button" value="註冊"></a>
     </form>
 </div>
+<?php 
+$this->endSection();
+?>
+
+
         
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -112,3 +113,10 @@
     <?php }?>
     <div class="clear" ></div>
 <div class="login">
+   <?php $this->renderSection(); ?>
+</div>
+</div>
+</body>
+</html>
+
+
