@@ -19,9 +19,9 @@
             }
             
             $sql="INSERT INTO `".$this->table."` (`".implode('`,`', array_keys($data))."`) VALUES ('".implode("','", $data)."')";
-            
+            //file_put_contents(time().'.txt',$sql);
             $bool=$this->db->sqlquery($sql);
-            echo $bool;
+           
             return $bool;
         
         }
@@ -52,11 +52,22 @@
             return $this;
         }
 
+        public function Desc($desc){
+            $this->sql_str.=' ORDER BY `'.$desc.'` DESC';
+            return $this;
+        }
+
+        public function Limit($LIMIT){
+            $this->sql_str.=' LIMIT '.$LIMIT;
+            return $this;
+        }
+
         public function Delete($id,$debug=false){
             $id=$this->db->replacedata($id);
             $sql="DELETE FROM `".$this->table."` where " .$this->primaryKey."='".$id."' ".$this->sql_str;
             if($debug){
                 echo $sql;
+                file_put_contents('./sql.txt',$sql);
                 exit;
             }
             return $this->db->sqlquery($sql);
@@ -97,6 +108,7 @@
 
             $sql='Select * From `'.$this->table.'` where 1 '.$this->sql_str;
             $obj=$this->db->sqlquery($sql);
+            file_put_contents('./sql.txt',$sql);
             $this->sql_str='';
             return $this->db->resultarray($obj);
 

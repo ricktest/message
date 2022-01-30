@@ -5,6 +5,7 @@
     public function __construct()
     {
         $this->usermodel=$this->Model('user');
+        $this->Login_record=$this->Model('Login_record');
       
     }
 
@@ -14,8 +15,22 @@
         $this->view('login',$data);
        
     }
-    public function loginprogess(){
+
+    public function CheckData($data){
+
         $fun=new fun();
+        $fun->run($data,true);
+        $erreo=$fun->geterreos();
+        if(isset($erreo)){
+            $msg['msg']=$erreo;
+            echo json_encode($msg);
+            return true;
+        }
+
+    }
+
+    public function loginprogess(){
+        
         $data=[
             'acount'=>[
                     'rules'=>'required',
@@ -30,32 +45,54 @@
                     ]
             ]
         ];
-        $fun->run($data,true);
-        $erreo=$fun->geterreos();
-        //print_r($erreo);
-        if(isset($erreo)){
-            $msg['msg']=$erreo;
+
+        if($this->CheckData($data)){
+            return;
+        }
+  
+        if($this->CheckLoginUser()){      
+            $msg['link']='./?c=dashbord&m=index';
+            $msg['msg']='登入成功';
             echo json_encode($msg);
+            $data_record['login_status']='Y001';
+            $data_record['login_acount']=$_POST['acount'];
+            $data_record['login_pwd']=$_POST['pwd'];
+            $data_record['login_date']=date('Y-m-d H:i:s');
+            $this->Login_record->Create($data_record);
             return ;
         }
 
-        if(empty($erreo) && isset($_POST)){
-            $data2['acount']=$_POST['acount'];
-            $data2['pwd']=$_POST['pwd'];
-            $users=$this->usermodel->where($data2)->SelectData();
-            if(isset($users)){      
-                $_SESSION=$users[0];
-                $msg['link']='./?c=dashbord&m=index';
-                echo json_encode($msg);
-                return ;
-                //$this->redirect('./?c=dashbord&m=index','登入成功');
-            }else{
-                $msg['msg']='帳號密碼錯誤';
-                echo json_encode($msg);
-                return ;
-                //$this->redirect('./?c=users&m=login','帳號密碼錯誤');
-            }
+        $msg['msg']='帳號密碼錯誤';
+        echo json_encode($msg);
+        $data_record['login_status']='Y002';
+        $data_record['login_acount']=$_POST['acount'];
+        $data_record['login_pwd']=$_POST['pwd'];
+        $data_record['login_date']=date('Y-m-d H:i:s');
+        $this->Login_record->Create($data_record);
+        return ;
+        
+    }
+
+    public function CheckLoginUser(){
+
+        $data2['acount']=$_POST['acount'];
+        $data2['pwd']=$_POST['pwd'];
+        $users=$this->usermodel->where($data2)->SelectData();
+        if(isset($users)){  
+            $_SESSION=$users[0];
+            return true;
         }
+        return false;
+    }
+    public function CheckAcount(){
+        $sql_data['acount']=$_POST['acount'];
+        $users=$this->usermodel->where($sql_data)->SelectData();
+        if(isset($users)){
+            $msg['msg']='帳號重複請重新輸入';
+            echo json_encode($msg);
+            return true;
+        }
+        return false;
     }
     public function register(){
         
@@ -63,7 +100,6 @@
     }
     public function registerpro(){
         
-        $fun=new fun();
         $data=[
             'name'=>['rules'=>'required|max[20]',
                     'errors'=>[
@@ -86,34 +122,29 @@
                     ]
             ]
         ];
-        $fun->run($data);
-        $erreo=$fun->geterreos();
 
-        if(isset($erreo)){
-            $_SESSION['erreo']=$erreo;
-            $this->redirect('./?c=users&m=register');
+        if($this->CheckData($data)){
+            return;
         }
 
-        if(empty($erreo) && isset($_POST)){
-            $sql_data['acount']=$_POST['acount'];
-            $users=$this->usermodel->where($sql_data)->SelectData();
-            
-            if(isset($users)){
-                $_SESSION['erreo']['重複']='帳號重複請重新輸入';
-                $this->redirect('./?c=users&m=register');
-            }else{
-                $sql_data['name']=$_POST['name'];
-                $sql_data['acount']=$_POST['acount'];
-                $sql_data['pwd']=$_POST['pwd'];
-                
-                if($this->usermodel->Create($sql_data)){
-                    $this->redirect('./?c=users&m=login','註冊成功');
-                }else{
-                    $this->redirect('./?c=users&m=register','註冊失敗');
-                }
-                
-            }
+        if($this->CheckAcount()){
+            return ;
         }
+
+        $sql_data['name']=$_POST['name'];
+        $sql_data['acount']=$_POST['acount'];
+        $sql_data['pwd']=$_POST['pwd'];
+        $sql_data['level']='2';
+        $boo=$this->usermodel->Create($sql_data);
+        if($boo){
+            $msg['msg']='註冊成功';
+            $msg['link']='./?c=users&m=login';
+            echo json_encode($msg);
+            return ;
+        }
+            $msg['msg']='註冊失敗';
+            echo json_encode($msg);
+            return ;
     }
 }
 

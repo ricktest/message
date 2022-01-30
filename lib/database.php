@@ -20,7 +20,7 @@
         }
 
         function sqlquery($sql){
-          
+
             return $this->con->query($sql);
           
         }

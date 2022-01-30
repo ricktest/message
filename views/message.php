@@ -1,9 +1,9 @@
 <?php  $this->section();?>
 <div class="warp warp2">
     <h3>留言內容</h3>
-    <form action="./?c=dashbord&m=message" method="POST">
+    <form action="" method="POST" class="form">
         <textarea id="w3review" name="message" rows="" cols=""></textarea>
-        <input type="submit" value="送出">
+        <input type="button" value="送出" class="btn_message">
     </form>
 </div>
 <?php 
